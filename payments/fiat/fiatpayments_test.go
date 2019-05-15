@@ -57,15 +57,9 @@ var fiatPaymentWithoutWeiAmountMock = types.Payment{
 	Type:                "FIAT_PAYMENT",
 }
 
-var invoiceMock = types.Invoice{
-	Subject:        "sample invoice subject",
-	BodyHeaderText: "sample invoice header text",
-}
+var invoiceMock = "sample invoice content"
 
-var receiptMock = types.Invoice{
-	Subject:        "sample receipt subject",
-	BodyHeaderText: "sample receipt header text",
-}
+var receiptMock = "sample receipt content"
 
 var privateKeyMock = "d723d3cdf932464de15845c0719ca13ce15e64c83625d86ddbfc217bd2ac5f5a"
 
@@ -163,8 +157,7 @@ func TestGetInvoice(t *testing.T) {
 
 	res, err := fiatPaymentsClient.GetInvoice(fiatPaymentMock.ID)
 
-	et.Assert(invoiceMock.Subject == res.Subject, "Invoice subject does not match")
-	et.Assert(invoiceMock.BodyHeaderText == res.BodyHeaderText, "Invoice body header text does not match")
+	et.Assert(invoiceMock == res, "Invoice content does not match")
 	et.Assert(err == nil, "Not expected error expected")
 }
 
@@ -175,15 +168,12 @@ func TestSendInvoice(t *testing.T) {
 
 	gock.New(test.Env).
 		Get("/payments/0/invoice").
-		Reply(200).
-		JSON(invoiceMock)
+		Reply(200)
 
 	fiatPaymentsClient := NewClient(http.NewRequester(test.Env, test.APIKey, test.APISecret))
 
-	res, err := fiatPaymentsClient.SendInvoice(fiatPaymentMock.ID)
+	err := fiatPaymentsClient.SendInvoice(fiatPaymentMock.ID)
 
-	et.Assert(invoiceMock.Subject == res.Subject, "Invoice subject does not match")
-	et.Assert(invoiceMock.BodyHeaderText == res.BodyHeaderText, "Invoice body header text does not match")
 	et.Assert(err == nil, "Not expected error expected")
 }
 
@@ -201,7 +191,6 @@ func TestGetReceipt(t *testing.T) {
 
 	res, err := fiatPaymentsClient.GetReceipt(fiatPaymentMock.ID)
 
-	et.Assert(receiptMock.Subject == res.Subject, "Receipt subject does not match")
-	et.Assert(receiptMock.BodyHeaderText == res.BodyHeaderText, "Receipt body header text does not match")
+	et.Assert(receiptMock == res, "Receipt content does not match")
 	et.Assert(err == nil, "Not expected error expected")
 }

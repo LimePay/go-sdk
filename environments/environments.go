@@ -1,4 +1,4 @@
-package envs
+package environments
 
 const (
 	Sandbox    = "https://sandbox-api.limepay.io/v1"

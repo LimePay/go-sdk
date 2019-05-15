@@ -25,9 +25,9 @@ type internalPaymentsClient interface {
 type FiatPaymentsClient interface {
 	payments.RichPaymentsClient
 
-	GetInvoice(paymentID string) (*types.Invoice, error)
-	SendInvoice(paymentID string) (*types.Invoice, error)
-	GetReceipt(paymentID string) (*types.Receipt, error)
+	GetInvoice(paymentID string) (string, error)
+	SendInvoice(paymentID string) error
+	GetReceipt(paymentID string) (string, error)
 }
 
 // BaseFiatPaymentsClient -
@@ -84,34 +84,32 @@ func (f *BaseFiatPaymentsClient) computeAuthorizationSignature(signatureMetadata
 }
 
 // GetInvoice -
-func (f *BaseFiatPaymentsClient) GetInvoice(paymentID string) (*types.Invoice, error) {
+func (f *BaseFiatPaymentsClient) GetInvoice(paymentID string) (string, error) {
 	route := fmt.Sprintf(consts.RouteGetInvoice, paymentID)
 
-	invoice := &types.Invoice{}
+	invoice := ""
 
-	err := f.ExecuteRequest(consts.HTTPGet, route, nil, invoice)
+	err := f.ExecuteRequest(consts.HTTPGet, route, nil, &invoice)
 
 	return invoice, err
 }
 
 // SendInvoice -
-func (f *BaseFiatPaymentsClient) SendInvoice(paymentID string) (*types.Invoice, error) {
+func (f *BaseFiatPaymentsClient) SendInvoice(paymentID string) error {
 	route := fmt.Sprintf(consts.RouteSendInvoice, paymentID)
 
-	invoice := &types.Invoice{}
+	err := f.ExecuteRequest(consts.HTTPGet, route, nil, nil)
 
-	err := f.ExecuteRequest(consts.HTTPGet, route, nil, invoice)
-
-	return invoice, err
+	return err
 }
 
 // GetReceipt -
-func (f *BaseFiatPaymentsClient) GetReceipt(paymentID string) (*types.Receipt, error) {
+func (f *BaseFiatPaymentsClient) GetReceipt(paymentID string) (string, error) {
 	route := fmt.Sprintf(consts.RouteGetReceipt, paymentID)
 
-	receipt := &types.Receipt{}
+	receipt := ""
 
-	err := f.ExecuteRequest(consts.HTTPGet, route, nil, receipt)
+	err := f.ExecuteRequest(consts.HTTPGet, route, nil, &receipt)
 
 	return receipt, err
 }

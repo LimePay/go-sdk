@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"reflect"
 	"strings"
 
 	"github.com/LimePay/go-sdk/errors"
@@ -65,10 +66,19 @@ func (r *BaseRequester) ExecuteRequest(method string, route string, data interfa
 		return &sdkErr
 	}
 
-	err = json.Unmarshal(bytes, &model)
+	if model == nil {
+		return nil
+	}
 
-	if err != nil {
-		return err
+	switch reflect.TypeOf(model).String() {
+	case "*string":
+		*(model.(*string)) = string(bytes)
+	default:
+		err = json.Unmarshal(bytes, model)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
